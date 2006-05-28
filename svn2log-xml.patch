@@ -1,0 +1,11 @@
+--- ./svn2log~	2006-05-28 21:32:52.821229239 +0300
++++ ./svn2log	2006-05-28 21:48:36.762348992 +0300
+@@ -35,7 +35,7 @@
+ import string
+ import codecs
+ 
+-from xml.utils import qp_xml
++import qp_xml
+ 
+ kill_prefix_rx = None
+ default_domain = "localhost"
