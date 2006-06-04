@@ -1,4 +1,5 @@
-Summary:	Convert specified subversion xml logfile to GNU-style ChangeLog
+Summary:	Convert specified subversion XML logfile to GNU-style ChangeLog
+Summary(pl):	Konwersja pliku loga XML z subversion do ChangeLoga w stylu GNU
 Name:		svn2log
 Version:	0.1
 Release:	0.3
@@ -13,6 +14,9 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 Convert specified subversion xml logfile to GNU-style ChangeLog.
+
+%description -l pl
+Konwersja pliku loga XML z subversion do ChangeLoga w stylu GNU.
 
 %prep
 %setup -q -c -T
