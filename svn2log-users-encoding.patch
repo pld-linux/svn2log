@@ -1,0 +1,111 @@
+--- ./svn2log~	2006-05-28 23:38:36.000000000 +0300
++++ ./svn2log	2006-12-14 19:09:11.752041366 +0200
+@@ -1,4 +1,5 @@
+ #!/usr/bin/python
++# -*- coding: UTF-8 -*-
+ #
+ # Copyright (c) 2003 The University of Wroclaw.
+ # All rights reserved.
+@@ -34,6 +35,7 @@
+ import getopt
+ import string
+ import codecs
++import locale
+ 
+ import qp_xml
+ 
+@@ -83,7 +85,7 @@
+   if users.has_key(u):
+     return users[u]
+   else:
+-    return "%s <%s@%s>" % (u, u, default_domain)
++    return u"%s <%s@%s>" % (u, u, default_domain)
+ 
+ def wrap_text_line(str, pref, width):
+   ret = u""
+@@ -139,7 +141,7 @@
+                           (time.strftime("%Y-%m-%d %H:%M +0000", time.localtime(self.beg_tm)), \
+                            self.rev, self.beg_rev, convert_user(self.author)))
+     else:
+-      out.write("%s [r%s]  %s\n\n" % \
++      out.write(u"%s [r%s]  %s\n\n" % \
+                           (time.strftime("%Y-%m-%d %H:%M +0000", time.localtime(self.beg_tm)), \
+                            self.rev, convert_user(self.author)))
+     out.write(self.msg)
+@@ -211,6 +213,8 @@
+   -o, --output         set output file (defaults to 'ChangeLog')
+   -d, --domain=DOMAIN  set default domain for logins not listed in users file
+   -u, --users=FILE     read logins from specified file
++      --users-encoding=ENCODING
++                       specify encoding of users. defaults to ISO8859-1
+   -F, --list-format    format commit logs with enumerated change list (items
+                        prefixed by '- ')
+   -r, --relocate=X=Y   before doing any other operations on paths, replace
+@@ -242,7 +246,7 @@
+ def process_opts():
+   try:
+     opts, args = getopt.gnu_getopt(sys.argv[1:], "o:u:p:x:d:r:d:D:Fh", 
+-                                   ["users=", "prefix=", "domain=", "delta=",
++                                   ["users-charset=", "users=", "prefix=", "domain=", "delta=",
+                                     "exclude=", "help", "output=", "relocate=",
+                                     "list-format"])
+   except getopt.GetoptError:
+@@ -250,6 +254,8 @@
+     sys.exit(2)
+   fin = sys.stdin
+   fout = None
++  users_file = None
++  users_charset = 'ISO8859-1'
+   global kill_prefix_rx, exclude, users, default_domain, reloc, max_join_delta, list_format
+   for o, a in opts:
+     if o in ("--prefix", "-p"):
+@@ -260,16 +266,13 @@
+       usage()
+       sys.exit(0)
+     elif o in ("--output", "-o"):
+-      fout = open(a, "w")
++      fout = utf_open(a, "w")
+     elif o in ("--domain", "-d"):
+       default_domain = a
+     elif o in ("--users", "-u"):
+-      f = utf_open(a, "r")
+-      for line in f.xreadlines():
+-        w = line.split()
+-        if len(line) < 1 or line[0] == '#' or len(w) < 2: 
+-          continue
+-        users[w[0]] = " ".join(w[1:])
++      users_file = a
++    elif o in ("--users-charset"):
++      users_charset = a
+     elif o in ("--relocate", "-r"):
+       (src, target) = a.split("=")
+       reloc[src] = target
+@@ -280,6 +283,7 @@
+     else:
+       usage()
+       sys.exit(2)
++
+   if len(args) > 1:
+     usage()
+     sys.exit(2)
+@@ -287,6 +291,14 @@
+     fin = open(args[0], "r")
+   if fout == None:
+     fout = utf_open("ChangeLog", "w")
++
++  if users_file != None:
++    f = utf_open(users_file, "r")
++    for line in f.xreadlines():
++      w = line.split()
++      if len(line) < 1 or line[0] == '#' or len(w) < 2:
++        continue
++      users[w[0]] = " ".join(w[1:]).decode(users_charset)
+   process(fin, fout)
+ 
+ if __name__ == "__main__":
+@@ -296,3 +308,5 @@
+   except AttributeError:
+     pass
+   process_opts()
++
++# vim:ts=2:sw=2:et
