@@ -2,12 +2,13 @@ Summary:	Convert specified subversion XML logfile to GNU-style ChangeLog
 Summary(pl):	Konwersja pliku loga XML z subversion do ChangeLoga w stylu GNU
 Name:		svn2log
 Version:	0.1
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Text
 Source0:	http://nemerle.org/svn/nemerle/trunk/misc/%{name}.py
 # Source0-md5:	3e27b3df04c5213811c82f42e27eb649
 Patch0:		%{name}-xml.patch
+Patch1:		%{name}-users-encoding.patch
 Requires:	python-qp_xml
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -22,6 +23,7 @@ Konwersja pliku loga XML z subversion do ChangeLoga w stylu GNU.
 %setup -q -c -T
 cp %{SOURCE0} %{name}
 %patch0 -p1
+%patch1 -p1
 
 %install
 rm -rf $RPM_BUILD_ROOT
